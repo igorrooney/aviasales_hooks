@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import nextId from "react-id-generator"
 import styled from 'styled-components'
-import * as _ from 'lodash';
+import * as _ from 'lodash'
 
 import SVG from 'react-inlinesvg'
 import useAviasalesApi from 'services/useAviasalesApi'
@@ -9,7 +9,7 @@ import useAviasalesApi from 'services/useAviasalesApi'
 import './App.css';
 import logoIcon from 'images/logo.svg'
 import Filter from 'components/Filter/Filter';
-import Tickets from 'components/Tickets/Tickets';
+import Tickets from 'components/Tickets/Tickets'
 
 const Wrapper = styled.div`
   display: flex;
@@ -35,8 +35,7 @@ const App = () => {
   const [tickets, setTickets] = useState([])
   const [filterStatus, setFilterStatus] = useState(1)
   const [stops, setStops] = useState([])
-  console.log(tickets, '<<< useState tickets')
-  /* 
+  /*
     filterStatus {
       1: Самый дешевый,
       2: Самый быстрый
@@ -44,7 +43,6 @@ const App = () => {
   */
 
   const stopsFilter = stops => { // [0, 1, 2, 3] || []
-    console.log('launch filter function')
     let filtered = []
     if ( stops.length === 0 ) {
       filtered = data
@@ -74,7 +72,6 @@ const App = () => {
   }, [filterStatus])
 
   useEffect(()=>{
-    console.log(stops, '<<< stops')
     setTickets(_.sortBy(stopsFilter(stops), 'price'))
   }, [stops])
 
@@ -108,4 +105,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default App

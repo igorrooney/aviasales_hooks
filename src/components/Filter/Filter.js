@@ -7,6 +7,8 @@ const Wrapper = styled.div`
   background: #FFFFFF;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
+  width: 232px;
+  height: 252px;
 `
 
 const H3 = styled.h3`

@@ -3,10 +3,13 @@ import styled from 'styled-components'
 import nextId from "react-id-generator"
 
 import Button from './Button'
+import Ticket from "../Ticket/Ticket";
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  margin-left: 20px;
 `
 
 const Tickets = ({ tickets, buttonFiltering, setFilterStatus }) => {
@@ -25,8 +28,8 @@ const Tickets = ({ tickets, buttonFiltering, setFilterStatus }) => {
         <button  
           onClick={()=>clickHandler(2)} >Cамый быстрый</button>
       </div>
-      {tickets.map(ticket => <div key={nextId()}>{ticket.price}</div>)}
-    </Wrapper>
+      {tickets.map(ticket => <Ticket ticket={ticket}/>)}
+</Wrapper>
   )
 }
 
