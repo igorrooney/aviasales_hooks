@@ -1,59 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import nextId from "react-id-generator"
-import styled from 'styled-components'
+import React, { useState, useEffect, useCallback } from 'react';
 import * as _ from 'lodash'
 
 import SVG from 'react-inlinesvg'
 import useAviasalesApi from 'services/useAviasalesApi'
 
-import './App.css';
 import logoIcon from 'images/logo.svg'
+// Components
+import Tabs from 'components/Tabs'
 import Filter from 'components/Filter/Filter';
-import Tickets from 'components/Tickets/Tickets'
-
-const Wrapper = styled.div`
-  display: flex;
-  width: 960px;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 auto;
-  background: #F3F7FA;
-  padding-top: 50px;
-  padding-left: 103px;
-  padding-right: 103px;
-  padding-bottom: 120px;
-`
-const MainContent = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-`
+import { Box, Container } from '@material-ui/core';
+// Constants
+import { ticketType } from './TicketConstants'
+// Styles
+import { useAppStyles } from './App.styles'
+import Spinner from './components/Spinner/Spinner';
 
 const App = () => {
+  const classes = useAppStyles()
   const [{ data, isLoading, isStopped }] = useAviasalesApi()
   const [tickets, setTickets] = useState([])
   const [filterStatus, setFilterStatus] = useState(1)
   const [stops, setStops] = useState([])
-  /*
-    filterStatus {
-      1: Самый дешевый,
-      2: Самый быстрый
-    }
-  */
+  const {
+    cheap,
+    fast,
+  } = ticketType
 
-  const stopsFilter = stops => { // [0, 1, 2, 3] || []
+  const stopsFilter = useCallback(stops => { // [0, 1, 2, 3] || []
     let filtered = []
     if ( stops.length === 0 ) {
       filtered = data
     }
     else {
       stops.map(stop => {
-        filtered = [...filtered, ...data.filter(ticket => ticket.segments.every(segment => segment.stops.length === stop))]
+        return filtered = [...filtered, ...data.filter(ticket => ticket.segments.every(segment => segment.stops.length === stop))]
       })
     }
     return filtered
-  }
+  }, [stops, data])
 
  useEffect(()=>{
     setTickets(_.sortBy(data, 'price'))
@@ -61,11 +45,11 @@ const App = () => {
 
 
   useEffect(()=>{
-      if (filterStatus === 1) {
+      if (filterStatus === cheap) {
         setTickets(_.sortBy(tickets, 'price'))
       }
   
-      if (filterStatus === 2) {
+      if (filterStatus === fast) {
         setTickets(mostFast(tickets))
       } 
     
@@ -75,8 +59,8 @@ const App = () => {
     setTickets(_.sortBy(stopsFilter(stops), 'price'))
   }, [stops])
 
-  const mostFast = tickets => {
-    
+
+  const mostFast = useCallback(tickets => {
     if (tickets.length > 0) {
       return _.sortBy(data, (ticket)=>{
           return ticket.segments.reduce((acc, segment) => {
@@ -85,23 +69,42 @@ const App = () => {
       }
       )
     }
-  }
+  }, [tickets, data])
 
+  const tabs = isLoading ? 
+    <Box 
+      display='flex'
+      justifyContent='center'
+      alignItems="center"
+      flex="1"
+    >
+      <Spinner />
+    </Box> :
+    <Tabs 
+      tickets={tickets.slice(0, 5)}
+      filterStatus={setFilterStatus}
+    />
 
   return (
-    <Wrapper>
-      <SVG src={logoIcon} />
-      <MainContent>
+    <Container 
+      className={classes.containerWrapper}
+      maxWidth="lg"
+    >
+      <Box className={classes.logo}>
+        <SVG 
+          className={classes.svgIcon}
+          src={logoIcon} 
+        />      
+      </Box>
+      <Box
+        className={classes.mainContent}
+      >
         <Filter 
           setStops={setStops}
           stops={stops} />
-        { isLoading ? 
-          <div>Loading...</div> : 
-          <Tickets 
-            tickets={tickets.slice(0, 5)}  
-            setFilterStatus={setFilterStatus} /> }
-      </MainContent>
-    </Wrapper>
+        {tabs}
+      </Box>
+    </Container>
   )
 }
 

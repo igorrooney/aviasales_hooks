@@ -1,33 +1,27 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import clsx from 'clsx';
+import Checkbox from '@material-ui/core/Checkbox';
 import SVG from 'react-inlinesvg'
+// Styles
+import { useCheckboxStyles } from './Checkbox.styles'
+import selected_checkbox from 'images/selected_checkbox.svg'
 
+export default function StyledCheckbox(props) {
+  const classes = useCheckboxStyles()
 
-import selectedCheckbox from 'images/selected_checkbox.svg'
-import unselectedCheckbox from 'images/unselected_checkbox.svg'
-
-const Wrapper = styled.div`
-  padding-bottom: 20px;
-  display: flex;
-  align-items: center;
-`
-
-const Label = styled.label`
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 13px;
-  line-height: 20px;
-  color: #4A4A4A;
-`
-
-const Checkbox = props => {
   return (
-    <Wrapper>
-    <input type="checkbox" id={props.name} value={props.name} {...props} />
-    <Label htmlFor={props.name} >{props.name}</Label>
-    </Wrapper>
+    <Checkbox
+      className={classes.root}
+      disableRipple
+      color="default"
+      checkedIcon={
+        <span className={classes.icon}>
+          <SVG src={selected_checkbox} className={classes.checkedIcon} />
+        </span>
+      }
+      icon={<span className={classes.icon} />}
+      inputProps={{ 'aria-label': 'decorative checkbox' }}
+      {...props}
+    />
   )
 }
-
-export default Checkbox

@@ -1,31 +1,13 @@
 import React, { useState } from 'react';
-import styled from 'styled-components'
-import Checkbox from './Checkbox/Checkbox';
-
-const Wrapper = styled.div`
-  padding: 20px 20px 0 20px;
-  background: #FFFFFF;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  width: 232px;
-  height: 252px;
-`
-
-const H3 = styled.h3`
-font-family: Open Sans;
-font-style: normal;
-font-weight: 600;
-font-size: 12px;
-line-height: 12px;
-letter-spacing: 0.5px;
-text-transform: uppercase;
-color: #4A4A4A;
-`
+import StyledCheckbox from './Checkbox/Checkbox';
+import { Box, Typography, FormControlLabel } from '@material-ui/core';
+// Styles
+import { useFilterStyles } from './Filter.styles';
 
 const filterNames = ["Все", "Без пересадок", "1 пересадка", "2 пересадки", "3 пересадки"]
 
 const Filter = ({ setStops, stops }) => {
-
+  const classes = useFilterStyles()
   const [currentFilter, setCurrentFilter] = useState('all')
 
   const onSetStops = (stop, stops) => {
@@ -42,25 +24,29 @@ const Filter = ({ setStops, stops }) => {
 
 
   const setFilter = filter => {
-    switch(filter) {
-      case 'Все':
+    const index = filterNames.indexOf(filter)
+    switch(index) {
+      case 0:
         setStops(onSetStops([], stops))
         break
 
-      case 'Без пересадок':
+      case 1:
         setStops(onSetStops(0, stops))
         break
 
-      case '1 пересадка':
+      case 2:
         setStops(onSetStops(1, stops))
         break
 
-      case '2 пересадки':
+      case 3:
         setStops(onSetStops(2, stops))
         break
 
-      case '3 пересадки':
+      case 4:
         setStops(onSetStops(3, stops))
+        break
+      default:
+        setStops(onSetStops([], stops))
         break
     }
   }
@@ -74,14 +60,30 @@ const Filter = ({ setStops, stops }) => {
 
 
   return (
-    <Wrapper>
-      <H3>Количество пересадок</H3>
-      {filterNames.map((filterName, index) => <Checkbox 
-        key={filterName} 
-        name={filterName} 
-        onChange={(e)=>{setFilter(e.target.value)}}
-        checked={onChecked(index)} />)}
-    </Wrapper>
+    <Box className={classes.filterWrapper}>
+      <Typography
+        variant={'body2'}  
+        className={classes.textHeader}
+      >
+        Количество пересадок
+      </Typography>
+      <Box className={classes.checkboxWrapper}>
+        {filterNames.map((filterName, index) => (
+          <FormControlLabel 
+            key={filterName}
+            control={
+              <StyledCheckbox  
+                name={filterName} 
+                onChange={e=>setFilter(e.target.name)}
+                checked={onChecked(index)} 
+              />
+            }
+            label={filterName}
+          />
+        ))}      
+      </Box>
+
+    </Box>
   )
 }
 
